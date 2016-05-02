@@ -45,10 +45,11 @@ a {
 .category-title {
    color: white;
    height: 100px;
-   line-height: 1em;
    font-size: x-large;
+   display: flex;
 }
 
 .category-title-content {
-   margin-top: 1em;
+   margin: auto;
+   line-height: 1em;
 }
