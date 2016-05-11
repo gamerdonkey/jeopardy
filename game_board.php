@@ -1,7 +1,10 @@
 <html>
 <head>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+   <script src="jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
+   <link rel="stylesheet" href="jquery.modal.min.css" type="text/css" media="screen" />
    <link rel="stylesheet" type="text/css" href="game_board_style.css">
-</head>
+ </head>
 <body>
 
 <div class="game-board">
@@ -35,5 +38,19 @@
   }
 ?>
 </div>
+
+<div id="question-modal" style="display:none;">
+  <p id="question-display"></p>
+  <p id="answer-display"></p>
+</div>
+
 </body>
+<script>
+  $('.question-box').click(function() {
+    $('#question-display').text($(this).find(".question-text").text());
+    $('#answer-display').text($(this).find(".answer-text").text());
+    $('#answer-display').hide();
+    $('#question-modal').modal();
+  });
+</script>
 </html>
