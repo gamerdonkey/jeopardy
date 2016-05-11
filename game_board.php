@@ -17,11 +17,19 @@
        <li class="display-box category-title">
          <div class="category-title-content"><?php echo $categoryRow['title']; ?></div>
        </li>
-       <li class="display-box">$200</li>
-       <li class="display-box">$400</li>
-       <li class="display-box">$600</li>
-       <li class="display-box">$800</li>
-       <li class="display-box">$1000</li>
+
+       <?php
+         $selectQuestionsStmt = $questionsDb->prepare('SELECT question_text, answer, value FROM questions WHERE category_id = :category_id ORDER BY value ASC');
+         $selectQuestionsStmt->bindValue(':category_id', $categoryRow['id'], SQLITE3_INTEGER);
+         $questionsResult = $selectQuestionsStmt->execute();
+
+         while($questionRow = $questionsResult->fetchArray(SQLITE3_ASSOC)) {
+           echo '<li class="display-box question-box">$' . $questionRow['value'];
+           echo '<p class="question-text">' . $questionRow['question_text'] . '</p>';
+           echo '<p class="answer-text">' . $questionRow['answer'] . '</p>';
+           echo '</li>';
+         }
+       ?>
     </ul>
     <?php
   }
