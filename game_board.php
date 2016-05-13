@@ -27,7 +27,7 @@
          $questionsResult = $selectQuestionsStmt->execute();
 
          while($questionRow = $questionsResult->fetchArray(SQLITE3_ASSOC)) {
-           echo '<li class="display-box question-box">$' . $questionRow['value'];
+           echo '<li class="display-box question-box"><span class="question-value">$' . $questionRow['value'] . '</span>';
            echo '<p class="question-text">' . $questionRow['question_text'] . '</p>';
            echo '<p class="answer-text">' . $questionRow['answer'] . '</p>';
            echo '</li>';
@@ -42,15 +42,22 @@
 <div id="question-modal" style="display:none;">
   <p id="question-display"></p>
   <p id="answer-display"></p>
+  <button id="answer-button"></button>
 </div>
 
 </body>
 <script>
   $('.question-box').click(function() {
+    $(this).find('.question-value').text('');
     $('#question-display').text($(this).find(".question-text").text());
     $('#answer-display').text($(this).find(".answer-text").text());
+    $('#answer-button').html('Show Answer');
     $('#answer-display').hide();
-    $('#question-modal').modal();
+    $('#question-modal').modal({fadeDuration: 300});
+  });
+
+  $('#answer-button').click(function() {
+    $('#answer-button').html($('#answer-display').text());
   });
 </script>
 </html>

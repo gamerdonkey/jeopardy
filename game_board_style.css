@@ -58,10 +58,25 @@ a {
    line-height: 1em;
 }
 
+.modal {
+  background: blue;
+  color: white;
+  font-weight: bold;
+  font-size: 2em;
+  text-align: center;
+}
+
 .question-text {
   display: none;
 }
 
 .answer-text {
   display: none;
+}
+
+button {
+  background-color: blue;
+  font-size: large;
+  color: white;
+  border: 2px solid white;
 }
