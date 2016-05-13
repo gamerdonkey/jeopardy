@@ -1,6 +1,6 @@
 <html>
 <head>
-   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+   <script src="jquery-2.2.3.min.js"></script>
    <script src="jquery.modal.min.js" type="text/javascript" charset="utf-8"></script>
    <link rel="stylesheet" href="jquery.modal.min.css" type="text/css" media="screen" />
    <link rel="stylesheet" type="text/css" href="game_board_style.css">
