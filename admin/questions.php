@@ -6,7 +6,7 @@ if( isset($_POST['category-title']) && !empty($_POST['category-title']) ) {
    $title = htmlentities($_POST['category-title']);
 
    $preparedStatement = $questionsDb->prepare('INSERT INTO categories (title) VALUES (:title)');
-   $preparedStatement->bindValue('title', title);
+   $preparedStatement->bindValue('title', $title);
    $result = $preparedStatement->execute();
    if(!$result) {
      echo "An error occurred!";
@@ -41,16 +41,14 @@ if( isset($_POST['category-title']) && !empty($_POST['category-title']) ) {
       <?php
     }
   ?>
+    <tr>
+      <form id="new-category-form" action="./questions.php" method="post">
+      <td></td>
+      <td><input required name="category-title" type="text" class="form-input" size=60 placeholder="New Category" /></td>
+      <td><input type="submit" class="button form-submit" value="Add" /></td>
+    </form>
+    </tr>
   </table>
 
-  <fieldset><legend>Add New Category</legend>
-    <form id="new-category-form" action="./questions.php" method="post">
-
-    <input required name="category-title" type="text" class="form-input" placeholder="Category Title" />
-
-    <input type="submit" class="button form-submit" value="Add" />
-
-    </form>
-  </fieldset>
 </body>
 </html>
