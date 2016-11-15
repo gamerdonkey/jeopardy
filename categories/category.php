@@ -5,8 +5,8 @@ if( isset($_GET['id']) && !empty($_GET['id']) ) {
 
   $categoryId = htmlentities($_GET['id']);
 
-  $categoryTitleSelectStatment = $questionsDb->prepare('SELECT title from categories where rowid = (:id)');
-  $categoryTitleSelectStatment->bindValue('id', $categoryId);
+  $categoryTitleSelectStatment = $questionsDb->prepare('SELECT title from categories where rowid = (:rowid)');
+  $categoryTitleSelectStatment->bindValue('rowid', $categoryId);
   $categoryTitleResult = $categoryTitleSelectStatment->execute();
   if(!$categoryTitleResult) {
     echo "An error occurred!";
@@ -67,7 +67,7 @@ else {
       <th></th>
     </tr>
   <?php
-    $selectQuestionsStmt = $questionsDb->prepare('SELECT rowid, question_text, answer, value  FROM questions WHERE category_id = (:id)');
+    $selectQuestionsStmt = $questionsDb->prepare('SELECT rowid, question_text, answer, value, used  FROM questions WHERE category_id = (:id)');
     $selectQuestionsStmt->bindValue('id', $categoryId);
     $questionsResult = $selectQuestionsStmt->execute();
     while($questionRow = $questionsResult->fetchArray(SQLITE3_ASSOC)) {
@@ -78,7 +78,7 @@ else {
           <td><input name="question-text" type="text" class="form-input" size=100 value="<?php echo $questionRow['question_text']; ?>" /></td>
           <td><input name="answer" type="text" class="form-input" value="<?php echo $questionRow['answer']; ?>" /></td>
           <td><input name="value" type="text" class="form-input" size=5 value="<?php echo $questionRow['value']; ?>" /></td>
-          <td></td>
+          <td><?php if($questionRow['used']) echo "X"; ?></td>
           <td><input type="submit" class="button form-submit" value="Save" /></td>
         </tr>
       </form>
