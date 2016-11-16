@@ -1,5 +1,6 @@
 <?php
-$questionsDb = new SQLite3('../db/mff_2016_questions.db');
+$configs = include('../config.php');
+$questionsDb = new SQLite3($configs['questionsDbFile']);
 
 if( isset($_GET['id']) && !empty($_GET['id']) ) {
 
