@@ -17,6 +17,18 @@
        echo "An error occurred!";
      }
   }
+  else if( isset($_GET['rowid']) && !empty($_GET['rowid']) ) {
+     $rowid = htmlentities($_GET['rowid']);
+     $scoreChange = htmlentities($_GET['value']);
+
+     $preparedStatement = $questionsDb->prepare('UPDATE scores SET score = score + :scoreChange where rowid = :rowid');
+     $preparedStatement->bindValue('rowid', $rowid);
+     $preparedStatement->bindValue('scoreChange', $scoreChange);
+     $result = $preparedStatement->execute();
+     if(!$result) {
+        echo "An error occurred!";
+     }
+  }
 ?>
 
 <html>
@@ -36,8 +48,32 @@
     <form action="./scorekeeper.php" method="post">
       <input name="rowid" type="hidden" value="<?php echo $scoreRow['rowid']; ?>" />
       <tr>
-        <td><input name="team_name" type="text" class="form-input" size=100 value="<?php echo $scoreRow['team_name']; ?>" /></td>
-        <td><input name="score" type="text" class="form-input" value="<?php echo $scoreRow['score']; ?>" /></td>
+        <td>
+            <input name="team_name" type="text" class="form-input" size=30 value="<?php echo $scoreRow['team_name']; ?>" />
+        </td>
+        <td>
+            <table align="center" border="true" cellpadding="20"> 
+                <tr>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=200">+200</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=400">+400</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=600">+600</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=800">+800</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=1000">+1000</a></td>
+                </tr>
+                <tr>
+                    <td colspan=5>
+                        <input name="score" type="text" class="form-input" value="<?php echo $scoreRow['score']; ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=-200">-200</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=-400">-400</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=-600">-600</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=-800">-800</a></td>
+                    <td><a href="./scorekeeper.php?rowid=<?php echo $scoreRow['rowid']; ?>&value=-1000">-1000</a></td>
+                </tr>
+            </table>
+        </td>
         <td><input type="submit" class="button form-submit" value="Save" /></td>
       </tr>
     </form>
