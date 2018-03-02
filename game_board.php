@@ -14,20 +14,20 @@
   $configs = include('./config.php');
   $questionsDb = new SQLite3($configs['questionsDbFile']);
 
-  // $selectCategoriesStmt = $questionsDb->prepare('SELECT id, title FROM categories WHERE round = :round');
-  $selectCategoriesStmt = $questionsDb->prepare('SELECT rowid, title FROM categories WHERE rowid in (SELECT category_id AS rowid FROM games WHERE round_id = :round)');
+  $selectCategoriesStmt = $questionsDb->prepare('SELECT rowid, title FROM categories WHERE rowid in (SELECT distinct(category_id) FROM games WHERE round_id = :round)');
   $selectCategoriesStmt->bindValue(':round', $_GET['round'], SQLITE3_INTEGER);
   $categoriesResult = $selectCategoriesStmt->execute();
   while($categoryRow = $categoriesResult->fetchArray(SQLITE3_ASSOC)) {
-    ?>
+?>
     <ul class="category">
        <li class="display-box category-title">
          <div class="category-title-content"><?php echo $categoryRow['title']; ?></div>
        </li>
 
        <?php
-         $selectQuestionsStmt = $questionsDb->prepare("SELECT question_text, answer, value FROM questions WHERE category_id = :category_id and value != '' ORDER BY value ASC");
+         $selectQuestionsStmt = $questionsDb->prepare("SELECT rowid, question_text, answer, value FROM questions WHERE category_id = :category_id and rowid in (select question_id from games where round_id = :round_id and category_id = :category_id) ORDER BY value ASC");
          $selectQuestionsStmt->bindValue(':category_id', $categoryRow['rowid'], SQLITE3_INTEGER);
+         $selectQuestionsStmt->bindValue(':round_id', $_GET['round'], SQLITE3_INTEGER);
          $questionsResult = $selectQuestionsStmt->execute();
 
          while($questionRow = $questionsResult->fetchArray(SQLITE3_ASSOC)) {
