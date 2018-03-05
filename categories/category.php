@@ -2,6 +2,8 @@
 $configs = include('../config.php');
 $questionsDb = new SQLite3($configs['questionsDbFile']);
 
+include('upload_image.php');
+
 if( isset($_GET['id']) && !empty($_GET['id']) ) {
 
   $categoryId = htmlentities($_GET['id']);
@@ -31,11 +33,17 @@ if( isset($_GET['id']) && !empty($_GET['id']) ) {
       }
     }
     else {
-      $questionInsertStatement = $questionsDb->prepare('INSERT INTO questions (question_text, answer, value, category_id) VALUES ((:question_text), (:answer), (:value), (:categoryId))');
+      $questionInsertStatement = $questionsDb->prepare('INSERT INTO questions (question_text, image_location, answer, value, category_id) VALUES ((:question_text), (:image_location), (:answer), (:value), (:categoryId))');
       $questionInsertStatement->bindValue('question_text', $_POST['question-text']);
       $questionInsertStatement->bindValue('answer', $_POST['answer']);
       $questionInsertStatement->bindValue('value', $_POST['value']);
       $questionInsertStatement->bindValue('categoryId', $categoryId);
+
+      if( $_FILES['image']['size'] > 0 && $_FILES['image']['error'] == 0) {
+          $imageLocation = uploadFile($_FILES['image']);
+          $questionInsertStatement->bindValue('image_location', $imageLocation);
+      }
+
       $questionInsertResult = $questionInsertStatement->execute();
       if(!$questionInsertResult) {
         echo "An error occurred!";
@@ -64,11 +72,12 @@ else {
       <th>Clue</th>
       <th>Answer</th>
       <th>Value</th>
+      <th>Image</th>
       <th>Used</th>
       <th></th>
     </tr>
   <?php
-    $selectQuestionsStmt = $questionsDb->prepare('SELECT rowid, question_text, answer, value, used  FROM questions WHERE category_id = (:id)');
+    $selectQuestionsStmt = $questionsDb->prepare('SELECT rowid, question_text, image_location, answer, value, used  FROM questions WHERE category_id = (:id)');
     $selectQuestionsStmt->bindValue('id', $categoryId);
     $questionsResult = $selectQuestionsStmt->execute();
     while($questionRow = $questionsResult->fetchArray(SQLITE3_ASSOC)) {
@@ -76,9 +85,10 @@ else {
       <form action="./category.php?id=<?php echo $categoryId ?>" method="post">
         <input name="rowid" type="hidden" value="<?php echo $questionRow['rowid']; ?>" />
         <tr>
-          <td><input name="question-text" type="text" class="form-input" size=100 value="<?php echo $questionRow['question_text']; ?>" /></td>
+          <td><input name="question-text" type="text" class="form-input" size=80 value="<?php echo $questionRow['question_text']; ?>" /></td>
           <td><input name="answer" type="text" class="form-input" value="<?php echo $questionRow['answer']; ?>" /></td>
           <td><input name="value" type="text" class="form-input" size=5 value="<?php echo $questionRow['value']; ?>" /></td>
+          <?php echo '<td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="' . $questionRow['image_location'] . '">' . $questionRow['image_location'] . '</td>'; ?>
           <td><?php if($questionRow['used']) echo "X"; ?></td>
           <td><input type="submit" class="button form-submit" value="Save" /></td>
         </tr>
@@ -87,11 +97,12 @@ else {
     }
   ?>
 
-    <form id="new-question-form" action="./category.php?id=<?php echo $categoryId ?>" method="post">
+    <form id="new-question-form" action="./category.php?id=<?php echo $categoryId ?>" method="post" enctype="multipart/form-data">
       <tr>
-        <td><input name="question-text" type="text" class="form-input" size=100 placeholder="New Clue" /></td>
+        <td><input name="question-text" type="text" class="form-input" size=80 placeholder="New Clue" /></td>
         <td><input name="answer" type="text" class="form-input" /></td>
         <td><input name="value" type="text" class="form-input" size=5 /></td>
+        <td><input name="image" type="file" /></td>
         <td></td>
         <td><input type="submit" class="button form-submit" value="Add" /></td>
       </tr>
